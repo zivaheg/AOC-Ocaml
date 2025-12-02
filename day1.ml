@@ -126,6 +126,7 @@ let rec nal2 podatkov_seznam =
 
       (new_val, zeros)
 
+(* PRAVILNI ODGOVOR: int * int = (22, 6166) aka 6166*)
 
 (* let rec nal2 podatkov_seznam =
   match podatkov_seznam with
