@@ -43,7 +43,7 @@ let rec sum_sez sez =
     |> List.map int_of_string
     |> sum_sez 
 
-(*resitev: int = 13108371860*)
+(*PRAVILNI ODGOVOR: int = 13108371860*)
 
 (*-----------------------------------NALOGA 2-----------------------------------------------*)
 
@@ -71,7 +71,7 @@ let is_periodic str =
             match seg = base with
             | true -> check (j + i)
             | false -> false in
-            
+
       match check i with
       | true -> true
       | false -> try_i (i + 1) in
@@ -85,3 +85,4 @@ let nal2 =
   |> List.map int_of_string
   |> sum_sez
 
+(* PRAVILNI ODGOVOR: int = 22471660255*)
