@@ -85,15 +85,47 @@ let sign x =
   | y when y > 0 -> 1
   | _ -> -1
 
+
+let floor_div a b =
+  let q = a / b in
+  match (a >= 0, a mod b = 0) with
+  | (true, _) -> q
+  | (false, true) -> q
+  | (false, false) -> q - 1
+
 let prehodi old korak =
   match korak with
   | 0 -> 0
-  | k when (k > 0) ->
-    let meja = 100 - old in
-    if k < meja then 0 else 1 + ((k - meja) / 100)
+  | k when k > 0 ->
+      let start = old in
+      let stop = old + k in
+      let cnt = (floor_div stop 100) - (floor_div start 100) in
+      if cnt >= 0 then cnt else 0
   | k ->
-    let premik = abs k in
-    if premik < old then 0 else 1 + ((premik - old) / 100)
+
+      let start = old in
+      let stop = old + k in
+      let cnt = (floor_div (start - 1) 100) - (floor_div (stop - 1) 100) in
+      if cnt >= 0 then cnt else 0
+
+let rec nal2 podatkov_seznam =
+  match podatkov_seznam with
+  | [] -> (50, 0)
+  | x :: xs ->
+      let (old, counter) = nal2 xs in
+
+      let korak =
+        match x with
+        | y when String.contains y 'R' -> poberi_int y
+        | y when String.contains y 'L' -> - (poberi_int y)
+        | y -> failwith ("shouldn't happen, napačni str: " ^ y) in
+      let vsota = old + korak in
+      let new_val = obrat vsota in
+      let wraps = prehodi old korak in
+      let zeros = counter + wraps in
+
+      (new_val, zeros)
+
 
 (* let rec nal2 podatkov_seznam =
   match podatkov_seznam with
@@ -134,52 +166,3 @@ match podatkov_seznam with
     | _ -> counter + pribitek in
 
   (new_val, zeros)*)
-
-
-
-(* floor division a // b (mathematical floor), b > 0 assumed *)
-let floor_div a b =
-  let q = a / b in
-  (* OCaml truncates toward zero; correct when a >= 0 or divisible *)
-  match (a >= 0, a mod b = 0) with
-  | (true, _) -> q
-  | (false, true) -> q
-  | (false, false) -> q - 1
-
-(* count how many multiples of 100 are crossed when moving from `old` by `korak`.
-   This counts occurrences strictly after the start and up to-and-including the end
-   (so landing on zero at the end is counted; starting at zero and moving away is not). *)
-let prehodi old korak =
-  match korak with
-  | 0 -> 0
-  | k when k > 0 ->
-      let start = old in
-      let stop = old + k in
-      let cnt = (floor_div stop 100) - (floor_div start 100) in
-      if cnt >= 0 then cnt else 0
-  | k ->
-      (* negative movement: use the (start-1)/(end-1) trick so that
-         landing at exactly a multiple on the end is counted, but starting
-         exactly at a multiple is not counted. *)
-      let start = old in
-      let stop = old + k in
-      let cnt = (floor_div (start - 1) 100) - (floor_div (stop - 1) 100) in
-      if cnt >= 0 then cnt else 0
-
-let rec nal2 podatkov_seznam =
-  match podatkov_seznam with
-  | [] -> (50, 0)
-  | x :: xs ->
-      let (old, counter) = nal2 xs in
-
-      let korak =
-        match x with
-        | y when String.contains y 'R' -> poberi_int y
-        | y when String.contains y 'L' -> - (poberi_int y)
-        | y -> failwith ("shouldn't happen, napačni str: " ^ y) in
-      let vsota = old + korak in
-      let new_val = obrat vsota in
-      let wraps = prehodi old korak in
-      let zeros = counter + wraps in
-
-      (new_val, zeros)
